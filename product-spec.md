@@ -499,7 +499,7 @@ HR/Admin only. Filter by user, date, **action** (Submit, Approve, Reject, Withdr
 
 ### 12.1 Public holidays
 
-Slovak public holidays are imported once at setup time and cached in the portal. The initial seed is the static fixture file `dev-extras/integration/fixtures/holidays-sk-2026.json` (or equivalent path in the team-template). The Admin can edit the list at runtime to handle ad-hoc changes (e.g. moved holidays).
+Slovak public holidays are imported once at setup time and cached in the portal. The reference seed (15 SK 2026 holidays) lives in `dev-extras/integration/mock-server/src/store/seed.ts` (`SK_HOLIDAYS_2026`); teams may re-encode it in whatever shape their stack prefers. The Admin can edit the list at runtime to handle ad-hoc changes (e.g. moved holidays).
 
 A worktime entry on a public holiday is allowed but produces a soft warning so HR can verify it was a deliberate choice.
 

@@ -8,9 +8,9 @@
 
 ## You are a parallel lane
 
-You are **not** staffed onto a build team. You do not facilitate stand-ups, cut scope, or run the clock. You produce your own deliverable across the day; it is judged independently against [`../ba/scoring-rubric.md`](ba/scoring-rubric.md).
+You are **not** staffed onto a build team. You do not facilitate stand-ups, cut scope, or run the clock. You produce your own deliverable across the day; it is judged independently against [`../ba/scoring-rubric.md`](../ba/scoring-rubric.md).
 
-Dev teams build from [`../product-spec.md`](../product-spec.md), [`../acceptance/`](../acceptance/), and the OpenAPI spec at the brief-repo root. They do not wait on you.
+Dev teams build from [`../product-spec.md`](../product-spec.md), [`../acceptance/`](../acceptance/), and [`../dev-extras/integration/api-reference.yaml`](../dev-extras/integration/api-reference.yaml). They do not wait on you.
 
 You may sit near a team and answer questions if asked. **Do not push help.** Teams that want a BA in the loop will ask; teams that don't, won't.
 

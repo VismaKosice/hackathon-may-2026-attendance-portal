@@ -5,7 +5,7 @@
 **Companion docs:** [`story-template.md`](story-template.md) for per-story shape, [`scoring-rubric.md`](scoring-rubric.md) for how the bundle is judged.
 **Date:** 2026-05-12
 
-> **You are not on a build team.** Dev teams build from [`../product-spec.md`](../product-spec.md), [`../acceptance/`](../acceptance/), and the OpenAPI spec at the brief-repo root. They do not wait on your stories. This document is about producing your **own deliverable** at depth — a parallel artefact judged on its own merit. See [`../role-quickstarts/business-analyst.md`](../role-quickstarts/business-analyst.md) first.
+> **You are not on a build team.** Dev teams build from [`../product-spec.md`](../product-spec.md), [`../acceptance/`](../acceptance/), and [`../dev-extras/integration/api-reference.yaml`](../dev-extras/integration/api-reference.yaml). They do not wait on your stories. This document is about producing your **own deliverable** at depth — a parallel artefact judged on its own merit. See [`../role-quickstarts/business-analyst.md`](../role-quickstarts/business-analyst.md) first.
 
 > **The spec is the contract.** Anything `product-spec.md` does not define is the team's discretion. Do not invent requirements. Document what's there; flag gaps without filling them with your preferences.
 

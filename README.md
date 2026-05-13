@@ -16,7 +16,7 @@ Welcome. This folder is the **single source of truth** for what you are building
 This brief is split by audience at the file level so a BA-only cut is cheap to extract:
 
 - **Core bundle (this folder, excluding `dev-extras/`)** — requirements + judging contract + BA materials. Anyone — BA, manager, judge, organiser — can read this end-to-end and understand *what* is being built and *how it is judged*.
-- **Dev-extras bundle (`dev-extras/`)** — implementation scaffolding for build teams: entity sketch, integration baselines (auth, email, fixtures), NFRs, frontend UX baseline, dev/QA role quickstarts. Layered on top of the core bundle.
+- **Dev-extras bundle (`dev-extras/`)** — implementation scaffolding for build teams: OpenAPI reference, stateful mock server, backend / frontend / testing technical refinements. Layered on top of the core bundle.
 
 Branch model: `main` carries both bundles during prep. A `requirements-only` cut can be produced at any time by `git rm -rf hackathon-brief/dev-extras/` on a fork or branch. Cross-references from core into `dev-extras/` are tolerant — they degrade to "not in this bundle" rather than break.
 
@@ -37,25 +37,21 @@ If the eval-runner sees you started a Bonus axis with Basic incomplete, you forf
 |---|---|---|
 | [`product-spec.md`](product-spec.md) | all | Behaviour spec. Read first. |
 | [`acceptance/`](acceptance/) | all | Gherkin features = judging rubric. **Treat as TDD spec.** |
-| [`demo-format.md`](demo-format.md) *(TBD)* | all | Run order, time per team, required artifacts (`eval-meta.yaml`). |
 | [`ba/story-template.md`](ba/story-template.md) | BA | Per-story shape. |
 | [`ba/slicing-guidance.md`](ba/slicing-guidance.md) | BA | Analyst playbook — slicing, dependency, Bonus ROI, team-shape recommendations. |
 | [`ba/scoring-rubric.md`](ba/scoring-rubric.md) | BA, judges | How the BA bundle is scored (100 pts, parallel lane). |
 | [`role-quickstarts/business-analyst.md`](role-quickstarts/business-analyst.md) | BA | 5-min entry. BAs are a parallel lane, not on a team. |
-| [`role-quickstarts/solo-or-multi.md`](role-quickstarts/solo-or-multi.md) *(TBD)* | all | Vertical slice plan for 2–3 person teams. |
 
 ### Dev-extras bundle (`dev-extras/` — build teams read)
 
 | Where | Audience | What |
 |---|---|---|
-| [`dev-extras/domain/entities.md`](dev-extras/domain/entities.md) *(TBD)* | dev | Entity sketch derived from the spec. Reference, not prescription. |
-| [`dev-extras/integration/auth-options.md`](dev-extras/integration/auth-options.md) *(TBD)* | dev | Mock login (Basic) vs real auth options (Bonus). |
-| [`dev-extras/integration/email-stub.md`](dev-extras/integration/email-stub.md) *(TBD)* | dev | Recommended local SMTP capture (MailHog / Mailpit). |
-| [`dev-extras/integration/fixtures/`](dev-extras/integration/fixtures/) *(TBD)* | dev + QA | Users, teams, holidays, quotas, in-flight absences, sample docs. |
-| [`dev-extras/nfr/performance.yaml`](dev-extras/nfr/performance.yaml) *(TBD)* | dev | Latency + calendar grid render targets. |
-| [`dev-extras/nfr/time-budget.yaml`](dev-extras/nfr/time-budget.yaml) *(TBD)* | dev | Build-window cap + per-phase guidance. |
-| [`dev-extras/frontend/fe-technical-refinement.md`](dev-extras/frontend/fe-technical-refinement.md) | frontend dev | FE technical refinement — 38 sections framework-agnostic (responsive, PWA, a11y WCAG 2.2 AA, theming, i18n, real-time, auth, file upload, perf budgets, design system, state, forms, security, testing, build/eval-runner, code architecture, DI, TZ handling, API contract, etc.) with Basic / Bonus tier mapping. |
-| [`dev-extras/role-quickstarts/`](dev-extras/role-quickstarts/) *(TBD)* | dev / QA | Per-role 5-min entry: backend dev/QA, frontend dev/QA. |
+| [`dev-extras/integration/api-reference.yaml`](dev-extras/integration/api-reference.yaml) | dev | OpenAPI 3.1 reference contract — Basic-tier routes, shared `Problem` envelope, cursor pagination, ETag/If-Match. |
+| [`dev-extras/integration/mock-server/`](dev-extras/integration/mock-server/) | dev + QA | Stateful in-memory mock server (Fastify + TypeScript). Seeded users/teams/holidays/absences. Use for FE-only assignments or as a contract sanity check. Holiday + user fixtures live in [`src/store/seed.ts`](dev-extras/integration/mock-server/src/store/seed.ts). |
+| [`dev-extras/backend/be-technical-refinement.md`](dev-extras/backend/be-technical-refinement.md) | backend dev | BE technical refinement — 36 sections, Basic / Bonus tier mapping. |
+| [`dev-extras/frontend/fe-technical-refinement.md`](dev-extras/frontend/fe-technical-refinement.md) | frontend dev | FE technical refinement — 38 sections framework-agnostic with Basic / Bonus tier mapping. |
+| [`dev-extras/testing/testing-be-technical-refinement.md`](dev-extras/testing/testing-be-technical-refinement.md) | backend QA | BE testing refinement — pyramid, H/S matrices, state-machine, fixtures, CI. |
+| [`dev-extras/testing/testing-fe-technical-refinement.md`](dev-extras/testing/testing-fe-technical-refinement.md) | frontend QA | FE testing refinement — runner+browser matrix, critical flows, a11y gate, perf smoke. |
 
 ## Role start map
 
@@ -63,22 +59,21 @@ Don't read everything. Pick your role, follow the quickstart.
 
 | You are | Bundle | Start here | Then |
 |---|---|---|---|
-| **Backend dev** | core + dev-extras | [`dev-extras/role-quickstarts/backend-dev.md`](dev-extras/role-quickstarts/backend-dev.md) | `dev-extras/domain/entities.md` → `acceptance/*.feature` → spec §6, §7, §9 |
-| **Backend QA / SDET** | core + dev-extras | [`dev-extras/role-quickstarts/backend-qa.md`](dev-extras/role-quickstarts/backend-qa.md) | `acceptance/*.feature` → `dev-extras/integration/fixtures/` |
-| **Frontend dev** | core + dev-extras | [`dev-extras/role-quickstarts/frontend-dev.md`](dev-extras/role-quickstarts/frontend-dev.md) *(TBD)* | `dev-extras/frontend/fe-technical-refinement.md` → spec §17 |
-| **Frontend QA** | core + dev-extras | [`dev-extras/role-quickstarts/frontend-qa.md`](dev-extras/role-quickstarts/frontend-qa.md) | `acceptance/employee.feature` + `manager.feature` |
+| **Backend dev** | core + dev-extras | [`dev-extras/backend/be-technical-refinement.md`](dev-extras/backend/be-technical-refinement.md) | `acceptance/*.feature` → spec §6, §7, §9 → [`dev-extras/integration/api-reference.yaml`](dev-extras/integration/api-reference.yaml) |
+| **Backend QA / SDET** | core + dev-extras | [`dev-extras/testing/testing-be-technical-refinement.md`](dev-extras/testing/testing-be-technical-refinement.md) | `acceptance/*.feature` → [`dev-extras/integration/mock-server/`](dev-extras/integration/mock-server/) |
+| **Frontend dev** | core + dev-extras | [`dev-extras/frontend/fe-technical-refinement.md`](dev-extras/frontend/fe-technical-refinement.md) | spec §17 → [`dev-extras/integration/api-reference.yaml`](dev-extras/integration/api-reference.yaml) → [`dev-extras/integration/mock-server/`](dev-extras/integration/mock-server/) |
+| **Frontend QA** | core + dev-extras | [`dev-extras/testing/testing-fe-technical-refinement.md`](dev-extras/testing/testing-fe-technical-refinement.md) | `acceptance/employee.feature` + `manager.feature` |
 | **Business Analyst** *(parallel lane — not on a team)* | core only | [`role-quickstarts/business-analyst.md`](role-quickstarts/business-analyst.md) | [`ba/slicing-guidance.md`](ba/slicing-guidance.md) + [`ba/story-template.md`](ba/story-template.md) + [`ba/scoring-rubric.md`](ba/scoring-rubric.md) |
-| **Solo or 2-person team** | core + dev-extras | [`role-quickstarts/solo-or-multi.md`](role-quickstarts/solo-or-multi.md) | vertical slice plan |
 
 ## Judging principle — spec is the contract
 
-**Teams are judged on what the spec defines, not on what it leaves undefined.** Anything `product-spec.md` does not specify is the team's discretion — choose freely and judges will not penalise the choice either way. This applies to UI details not covered by §17, API shapes not pinned by the OpenAPI at the repo root, choice of stack, choice of libraries, and any ambiguity inside the acceptance Gherkin. Do not waste time hedging against undefined behaviour; do not waste time arguing it.
+**Teams are judged on what the spec defines, not on what it leaves undefined.** Anything `product-spec.md` does not specify is the team's discretion — choose freely and judges will not penalise the choice either way. This applies to UI details not covered by §17, API shapes not pinned by the OpenAPI at [`dev-extras/integration/api-reference.yaml`](dev-extras/integration/api-reference.yaml), choice of stack, choice of libraries, and any ambiguity inside the acceptance Gherkin. Do not waste time hedging against undefined behaviour; do not waste time arguing it.
 
 ## Ground rules
 
 1. **Pick one stack.** Don't argue stack choice past minute 30. Ship beats perfect.
 2. **Acceptance Gherkin is the contract.** If a scenario passes, the feature is done. If not, it isn't.
-3. **Fixtures are canonical.** Use the data in `dev-extras/integration/fixtures/`. Don't invent your own users, holidays, or year-rollover scenarios — judges replay against the same fixtures.
+3. **Fixtures are canonical.** Use the seeded data in [`dev-extras/integration/mock-server/src/store/seed.ts`](dev-extras/integration/mock-server/src/store/seed.ts) (users, teams, Slovak 2026 holidays, sample absences). Don't invent your own — judges replay against the same fixtures.
 4. **Mock auth is fine for Basic.** Don't burn 60 minutes on OIDC before the rule engine works.
 5. **Premium Claude seat per person.** Pro caps reset every 5h. Reserve Opus for hard problems; Sonnet 4.6 covers most workload.
 6. **In-product AI features need your own API key.** Pro/Max seats cover Claude Code dev-time. They do **not** authenticate runtime API calls from the portal.
@@ -97,7 +92,7 @@ Total **160 points**.
 | Code quality | 10 | Structure / DRY (`jscpd`) / complexity. AI fallback where stack tooling fragments. |
 | Polish | 10 | Judge-subjective — UX, demo flow, agent workflow shown |
 
-**BA lane — separate parallel scoring, 100 Basic + 30 Bonus (gated) = up to 130 pts.** BAs do not staff build teams. They produce an end-of-day analysis bundle judged independently under [`ba/scoring-rubric.md`](ba/scoring-rubric.md). Bonus tier mirrors the team rubric — counted only when BA Basic ≥ 90 pts. Build teams do not depend on BAs — they build from `product-spec.md`, `acceptance/`, and the OpenAPI spec at the repo root from hour 0.
+**BA lane — separate parallel scoring, 100 Basic + 30 Bonus (gated) = up to 130 pts.** BAs do not staff build teams. They produce an end-of-day analysis bundle judged independently under [`ba/scoring-rubric.md`](ba/scoring-rubric.md). Bonus tier mirrors the team rubric — counted only when BA Basic ≥ 90 pts. Build teams do not depend on BAs — they build from `product-spec.md`, `acceptance/`, and `dev-extras/integration/api-reference.yaml` from hour 0.
 
 Tiebreaker: head-to-head judge vote.
 
