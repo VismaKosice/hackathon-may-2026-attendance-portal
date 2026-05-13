@@ -152,7 +152,7 @@ Feature: HR — documents queue, monthly export, audit log, quotas, exceptions r
 
   @bonus @email-channel
   Scenario: Document approval also delivers a "Document validated" email
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     And Janka's Paragraph absence for "2026-05-12 morning" is "Pending HR document validation"
     And the manager has already Approved the absence
     When I Approve the document
@@ -160,7 +160,7 @@ Feature: HR — documents queue, monthly export, audit log, quotas, exceptions r
 
   @bonus @email-channel
   Scenario: Document rejection also delivers a "Document rejected" email containing the reason
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     And Janka's Paragraph absence is in state "Approved (manager) / Pending document"
     When I Reject the document with reason "Illegible scan"
     Then the SMTP capture contains a "Document rejected" email addressed to Janka containing the reason

@@ -131,14 +131,14 @@ Feature: Manager — approvals queue, team calendar, skip-level chain
 
   @bonus @email-channel
   Scenario: Approve decision also delivers an "Approved" email to the requester
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     And Anna has a Pending Vacation from "2026-07-13" to "2026-07-17"
     When I Approve the request
     Then the SMTP capture contains an "Approved" email addressed to Anna
 
   @bonus @email-channel
   Scenario: Reject decision also delivers a "Rejected" email containing the reason
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     And Anna has a Pending Vacation from "2026-07-13" to "2026-07-17"
     When I Reject with reason "Coverage conflict — please re-pick"
     Then the SMTP capture contains a "Rejected" email addressed to Anna containing the reason

@@ -36,7 +36,7 @@ The product spec's tier gate (Basic ≥ 90 % before any Bonus is counted) applie
 | §17 Security tests | **Basic** | Authn bypass attempts, IDOR, RBAC negative, audit-log read-restriction. |
 | §18 Test data + fixtures | **Basic** | Seed must be deterministic and reproducible from a single command. |
 | §19 Test isolation + determinism | **Basic** | No order dependence, injected clock, seeded randomness. |
-| §20 CI + headless run + reporting | **Basic** | `make test` (or equivalent) declared in `eval-meta.yaml`. |
+| §20 CI + headless run + reporting | **Basic** | `make test` (or equivalent) runnable with stack-conventional commands. |
 | §21 Coverage targets | **Basic** | Numbers below are guides, not hard gates. Vanity tests penalised. |
 | §22 Property-based / generative tests | **Bonus** | Strong High signal for the rule engine + quota view. |
 | §23 Mutation testing | **Bonus** | Polish axis only. |
@@ -266,7 +266,7 @@ Useful for catching N+1 queries and unbounded list responses.
 
 - Seed 500 employees, 50 teams, 12 months of entries (~50 entries / employee).
 - Assert key endpoints respond under a threshold (e.g. monthly XLSX export < 5 s, team-calendar grid < 500 ms, approvals queue < 200 ms).
-- Use a single load tool — `autocannon`, `locust`, `vegeta`, `wrk` — declared in `eval-meta.yaml`.
+- Use a single load tool — `autocannon`, `locust`, `vegeta`, `wrk` — runnable with stack-conventional commands.
 
 ## 17. Security tests
 
@@ -277,7 +277,7 @@ Useful for catching N+1 queries and unbounded list responses.
 - **File-upload guardrails** — MIME validation, magic-byte sniffing, size cap, no path traversal in filename, virus-scan-stub or hook (Bonus).
 - **Rate limiting (Bonus per spec §14)** — burst test asserts the endpoint returns 429 with `Retry-After`.
 - **Dependency hygiene** — `npm audit`, `pip-audit`, `cargo audit`, `mvn dependency-check`, equivalent runs in CI and fails on high/critical.
-- **`gitleaks` + `trivy fs` + `semgrep --config=auto`** all pass per the eval-runner.
+- **`gitleaks` + `trivy fs` + `semgrep --config=auto`** all pass per the scoring system.
 
 ## 18. Test data + fixtures
 
@@ -303,9 +303,9 @@ Useful for catching N+1 queries and unbounded list responses.
 
 ## 20. CI + headless run + reporting
 
-- **Single command entrypoint** — `npm test`, `make test`, `pytest`, `go test ./...`, `mvn verify`, `dotnet test`. Declared in `eval-meta.yaml`.
+- **Single command entrypoint** — `npm test`, `make test`, `pytest`, `go test ./...`, `mvn verify`, `dotnet test`. Document the chosen command in `README.md`.
 - **Headless** — no interactive prompts, no human-in-the-loop input.
-- **JUnit XML report** (or framework-native) emitted to `reports/junit/*.xml` for the eval-runner.
+- **JUnit XML report** (or framework-native) emitted to `reports/junit/*.xml` for the scoring system.
 - **Coverage report** emitted to `reports/coverage/` (Cobertura XML or LCOV).
 - **CI matrix** — at minimum: latest LTS of the chosen runtime. Bonus: previous LTS.
 - **Test runtime budget** — full suite under 5 minutes locally. Parallelise where the framework supports it.

@@ -20,25 +20,25 @@ The product spec's tier gate (Basic ≥ 90 % before any Bonus is counted) applie
 | §7 Real-time | **Basic** = polling + optimistic UI. **Bonus** = websocket / SSE push (per product-spec §14). |
 | §8 Auth | **Basic** = mock-login (pick user, no password). **Bonus** = real OIDC / magic-link / password + bcrypt. |
 | §9 File upload UX | **Basic** | Documents are required for Paragraph/OCR/Special (H8) — without upload UX the Basic flow fails. Camera capture is desirable but acceptable to drop if mobile (§14 mobile-friendly) is also being skipped. |
-| §10 Performance budgets | **Basic** | Lighthouse CI scores feed both the **Polish 10 pts** and the eval-runner's bundle-size gate. |
+| §10 Performance budgets | **Basic** | Lighthouse CI scores feed the **Polish 10 pts** and contribute to bundle-size sanity in the scoring system. |
 | §11 Design system | **Basic** | Pick A / B / D (never build all atoms from scratch); tokens-driven. |
 | §12-16 State / forms / loading-states / notifications / routing | **Basic** | These are the shell + interaction quality bar; Basic Gherkin will fail without them. |
-| §17 Security | **Basic** | Contributes to the **Security 10 pts** rubric axis. The eval-runner runs `gitleaks`, `trivy fs`, `semgrep --config=auto` + hackathon ruleset against your repo. |
+| §17 Security | **Basic** | Contributes to the **Security 10 pts** rubric axis. The scoring system runs `gitleaks`, `trivy fs`, `semgrep --config=auto` + hackathon ruleset against your repo. |
 | §18 Telemetry | **Bonus** | Useful but skippable until Basic is green. |
 | §19 Testing | **Basic** for unit + integration + axe-core gate. **E2E** is Basic for the §13 critical flows; broader E2E and visual regression are Bonus polish. |
-| §20 Build + deploy | **Basic** | Must include `eval-meta.yaml` + a `make eval` entrypoint that the eval-runner can invoke. |
+| §20 Build + deploy | **Basic** | Repo builds + tests with stack-conventional commands; `TEAM.md` present at repo root. |
 | §21 Code architecture | **Basic** | Layering contributes to the **Code Quality 10 pts** rubric axis (`jscpd` for duplication, AI fallback for structure). |
 | §22 Code-quality rules | **Basic** | Same rubric axis. Strict types + no module-level singletons + lint-enforced layering. |
 | §23 Dependency injection | **Basic** | Foundation for the §22 layering and §19 testing. |
 | §24 Date / time / TZ | **Basic** | Attendance correctness depends on TZ handling; Basic Gherkin will fail in DST edge cases without it. |
-| §25 API contract | **Basic** | Required for FE/BE alignment; the eval-runner replays scenarios that depend on response shapes matching the spec. |
+| §25 API contract | **Basic** | Required for FE/BE alignment; the scoring system replays scenarios that depend on response shapes matching the spec. |
 | §26 Concurrent edit / conflict | **Basic** (UX) — at minimum show a sensible 409 dialog and offer refresh-and-retry. ETag round-trip is **Bonus**. |
 | §27 Persisted-state migration | **Bonus** | Hackathon scope rarely ships multiple deploys to the same browser. Skip unless time allows. |
 | §28 Export confidentiality | **Basic** (filename + role check + no PII in URLs). **Bonus**: download watermark. |
 | §29 Resilience | **Basic** (timeout + abort) — circuit breaker is **Bonus**. |
 | §30 Feature flags | **Bonus** | Worth it only if you actually intend to ship more than one stretch axis. |
-| §31 Logging | **Basic** | Cheap; protects you in eval-runner Security pass. |
-| §32 Local dev setup | **Basic** | The eval-runner clones your repo at demo time and runs `make eval`; the bootstrap path must work cold. |
+| §31 Logging | **Basic** | Cheap; protects you in the scoring system's Security pass. |
+| §32 Local dev setup | **Basic** | The scoring system pulls your `main` branch; the bootstrap path must work cold with stack-conventional commands. |
 | §33 Definition of Done | **Basic** | Process gate. |
 | §34 Print styles | **Bonus** | Polish axis only. |
 | §35 Keyboard shortcuts | **Bonus** | Polish axis only. The discoverable `?` overlay alone is acceptable. |
@@ -46,8 +46,9 @@ The product spec's tier gate (Basic ≥ 90 % before any Bonus is counted) applie
 | §37 Heavy library policy | **Basic** | Hits Lighthouse Performance ≥ 90 gate. |
 | §38 Privacy / consent | **Basic** | Slovak labour law + GDPR. The first-login privacy notice is mandatory. |
 
-The **eval-runner** (per repo `README.md`) wants:
-- A working `make eval` entrypoint declared in `eval-meta.yaml`.
+The **external scoring system** (per repo `README.md`) pulls each team's `main` branch and runs lane-specific evaluation. For the FE lane:
+- `TEAM.md` present at repo root with a member whose `role` includes `FE`.
+- Repo builds + tests with stack-conventional commands (e.g. `npm install && npm test`).
 - Repo passes `gitleaks`, `trivy fs`, `jscpd`, `semgrep --config=auto` + hackathon ruleset.
 - Your unit + integration + E2E suites are runnable headless.
 - AI passes scrutinise architecture, DRY, security of declared high-risk paths, test quality, and Bonus Gherkin conformance.
@@ -149,7 +150,7 @@ Mandatory bar. Internal app touching disability-related data (sickdays, PN, OCR)
 
 ## 8. Authentication and session
 
-> **Tier note.** **Basic = mock-login** — a user-picker bound to seeded fixture users; no password. The whole flow below (OIDC + PKCE) is the **Bonus** real-auth path. Implement the Basic path first; teams that finish Basic with time left implement the OIDC path and declare it in `eval-meta.yaml`.
+> **Tier note.** **Basic = mock-login** — a user-picker bound to seeded fixture users; no password. The whole flow below (OIDC + PKCE) is the **Bonus** real-auth path. Implement the Basic path first; teams that finish Basic with time left implement the OIDC path and declare it in `TEAM.md` notes.
 
 - **Protocol (Bonus):** OIDC standard. Authorisation Code + PKCE flow. No implicit, no resource-owner-password.
 - **Provider:** team picks (Auth0, Keycloak, Microsoft, Google, or a mock issuer for the hackathon demo).
@@ -418,7 +419,7 @@ Three layers + an accessibility audit gate.
 
 ## 20. Build and deployment shape
 
-> **Tier note.** The eval-runner (per repo `README.md`) clones your repo at demo time and invokes `make eval` (declared in `eval-meta.yaml`). Without that file your submission cannot be eval'd → you forfeit deterministic + AI eval points. **Basic** therefore includes: working `make eval`, declared stack ids, declared high-risk paths, repo passes `gitleaks` / `trivy fs` / `jscpd` / `semgrep --config=auto`.
+> **Tier note.** The external scoring system (per repo `README.md`) pulls each team's `main` branch and runs lane-specific evaluation. No special entrypoint — stack-conventional commands are used. `TEAM.md` at the repo root is mandatory; without it your team is skipped. **Basic** therefore includes: `TEAM.md` present + filled, stack-conventional build/test commands work cold, repo passes `gitleaks` / `trivy fs` / `jscpd` / `semgrep --config=auto`.
 
 - **Single-page app baseline.** SSR optional. If the chosen framework offers SSR cheaply (Next, Nuxt, SvelteKit, etc.), enable it for the landing / login routes only — SEO is not a goal, but SSR helps LCP.
 - **Build output:**
@@ -438,8 +439,8 @@ Three layers + an accessibility audit gate.
   8. Accessibility gate (`axe-core` from E2E + Lighthouse a11y).
   9. Dependency audit.
   10. Visual regression (stretch).
-- **Eval-runner compatibility (Basic):** the same `make eval` target the eval-runner invokes at demo time should also run locally and in CI; teams that wire CI = eval-runner avoid surprises on demo day. The Makefile target chains: install → lint → type-check → test → build → bundle-size gate → lighthouse → E2E → axe. Each step exits non-zero on failure.
-- **Eval-meta.yaml requirements** (per repo `README.md` §"Ground rules" + "Eval-runner"): stack ids, `make eval` entrypoint, high-risk paths array (FE paths typically include: auth flow, file upload, document preview iframe, export download endpoint, anywhere user-supplied notes are rendered).
+- **CI = scoring parity (Basic):** wire your CI to run the same stack-conventional commands the scoring system uses (`npm install && npm test`, `pytest`, etc.). Same chain locally and in CI: install → lint → type-check → test → build → bundle-size gate → lighthouse → E2E → axe. Each step exits non-zero on failure.
+- **`TEAM.md` requirements** (per repo `README.md` *TEAM.md — team manifest*): team display name, members (with `role` including `FE` for FE-lane scoring + git-commit email match), stack. Declare intentional scope cuts and high-risk paths in the notes body — FE high-risk paths typically include: auth flow, file upload, document preview iframe, export download endpoint, anywhere user-supplied notes are rendered.
 - **Release flow:** merge to `main` → auto-deploy to staging → manual promote to production. Service worker activates on the user's next visit; the user is prompted to refresh.
 - **Rollback:** previous build artefact retained for at least 7 days; promote-back is a single-command operation.
 - **No secrets in the FE bundle.** Anything starting with `VITE_PUBLIC_` / `NEXT_PUBLIC_` / equivalent is shipped to the browser and must be considered public. API keys, IdP client secrets stay server-side.

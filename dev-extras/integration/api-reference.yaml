@@ -19,7 +19,7 @@ info:
     file, the spec wins — flag the divergence in an issue.
 
     **Tier scope.** Basic only. The Bonus routes block at the bottom is illustrative.
-    Teams MAY redesign any of these paths; the eval-runner checks behaviour, not
+    Teams MAY redesign any of these paths; the scoring system checks behaviour, not
     byte-exact contract conformance.
 
     **Auth.** Two mutually exclusive auth modes are documented:

@@ -83,7 +83,7 @@ Feature: Year rollover — statutory protected, bonus discretionary, dry-run pre
 
   @bonus @email-channel
   Scenario: Year-rollover summary also delivers an email to every employee + HR
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     When the rollover is applied for "2026 -> 2027"
     Then the SMTP capture contains a "Year rollover summary" email addressed to every employee
     And the SMTP capture contains a "Year rollover summary" email addressed to every HR-role user

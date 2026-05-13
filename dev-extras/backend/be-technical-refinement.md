@@ -50,12 +50,12 @@ The product spec's tier gate (Basic ≥ 90 % before any Bonus is counted) applie
 | §30 Date / time / TZ handling | **Basic** | Europe/Bratislava authoritative; DST-aware. |
 | §31 Internationalisation (server-side) | **Basic** | XLSX labels + notification templates SK + EN. |
 | §32 Compliance + data retention | **Basic** | Audit retention, self-service export endpoint, deletion request handling. |
-| §33 Build + deploy + eval-runner integration | **Basic** | `make eval` + `eval-meta.yaml` declared; container image builds clean. |
+| §33 Build + deploy | **Basic** | Repo builds cold with stack-conventional commands; container image builds clean. |
 | §34 Local dev setup + DX | **Basic** | One-command bootstrap; deterministic seed. |
 | §35 Definition of Done | **Basic** | Process gate. |
 | §36 Feature flags | **Bonus** | Stretch axis. |
 
-The **eval-runner** (per repo `README.md`) clones the submission at demo time and invokes `make eval` (declared in `eval-meta.yaml`). For backend, that runs: install → migrate → seed → lint → type-check → unit + integration tests → build → security scans (`gitleaks`, `trivy fs`, `semgrep --config=auto`) → AI passes (architecture, DRY, security on declared high-risk paths, test quality, spec conformance). Sections §26, §33 below cover the backend side of each.
+The **external scoring system** (per repo `README.md`) pulls each team's `main` branch on every cycle and runs lane-specific evaluation against the repo. Teams do not declare an entrypoint; the scorer uses stack-conventional build/test commands inferred from `TEAM.md` and standard manifest files. Backend lane covers: install → migrate → seed → lint → type-check → unit + integration tests → build → security scans → AI passes (architecture, DRY, security on declared high-risk paths, test quality, spec conformance). Sections §26, §33 below cover the backend side of each.
 
 ---
 
@@ -236,7 +236,7 @@ Spec §3 defines roles (Employee, Manager, HR, Admin) and capabilities. Authoris
 
 - **Versioned.** Every schema change is a numbered migration file (`0001_init.sql`, `0002_add_quota_profile.sql`). Hand-rolled SQL or tool-managed (Flyway, Liquibase, Alembic, Prisma, Knex, golang-migrate, ActiveRecord, EF Core).
 - **Forward-only.** No `down` migration in production paths. Roll forward with a new migration if needed.
-- **Repeatable from zero.** A fresh database to fully-migrated must be a single command (`make migrate`, `npm run migrate`, equivalent). The eval-runner invokes this before tests.
+- **Repeatable from zero.** A fresh database to fully-migrated must be a single command (`make migrate`, `npm run migrate`, equivalent). The scoring system invokes this before tests.
 - **Idempotent.** Running migrations twice is a no-op.
 - **No data mutations in schema migrations.** Data backfills are separate, idempotent, restartable.
 - **CI gate.** Every PR runs migrations on a fresh DB; failure fails the build.
@@ -389,7 +389,7 @@ Year rollover is the canonical case. Spec §6.3 defines the worked examples.
 ## 22. Configuration + secrets
 
 - **Env-var driven.** `DATABASE_URL`, `AUTH_MODE`, `STORAGE_BACKEND`, `STORAGE_ROOT`, `JWT_SECRET`, `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `EMAIL_OUTBOX_ENABLED`, … Every variable documented in `.env.example`.
-- **No secrets in repo.** `.env` is `.gitignore`d. `gitleaks` runs in CI and on the eval-runner.
+- **No secrets in repo.** `.env` is `.gitignore`d. `gitleaks` runs in CI and on the scoring system.
 - **Twelve-factor config.** Code in one repo, config in env. No hardcoded `localhost`, no hardcoded ports.
 - **Config validation on boot.** Boot fails fast if a required variable is missing or malformed. No silent defaults for security-sensitive values.
 - **Different environments = different env files.** `.env.local`, `.env.test`, `.env.production`. Never copy production values into a dev file.
@@ -412,7 +412,7 @@ Year rollover is the canonical case. Spec §6.3 defines the worked examples.
 - **`/readyz`** (basic) — dependencies reachable (DB, storage, IdP if Bonus). Returns `200` only when the service can take traffic.
 - **Trace-id per request.** Generated at the entry edge (or extracted from `traceparent` header), propagated through the application context, included in every log line and every error response.
 - **Request metrics** (Bonus) — counter + histogram per route. Prometheus exposition at `/metrics` with `process_*`, `http_request_duration_seconds`, `http_requests_total{route,status}`.
-- **Domain metrics** (Bonus) — counters for `absence.submitted`, `absence.approved`, `notification.sent`, etc. Useful for the eval-runner's spec-conformance pass.
+- **Domain metrics** (Bonus) — counters for `absence.submitted`, `absence.approved`, `notification.sent`, etc. Useful for the scoring system's spec-conformance pass.
 - **OpenTelemetry (Bonus)** — spans across handler → use case → repository. Worth it only if the team has the SDK ready.
 - **No external telemetry by default.** All metrics scraped or pulled; no third-party APM tied to a SaaS in Basic.
 - **Log shipping** out of scope for the hackathon.
@@ -477,7 +477,7 @@ OWASP Top 10 awareness is a Basic expectation; specific controls follow.
 - Never returned in API responses.
 - Rotated via env var; redeploy required.
 
-### 26.8 Static analysis on the eval-runner
+### 26.8 Static analysis on the scoring system
 
 - `gitleaks` — no committed secrets.
 - `trivy fs` — no known-vulnerable dependencies.
@@ -562,14 +562,14 @@ GDPR applies. Slovak labour law mandates retention of attendance records for a s
 - **No third-party data export.** The portal never transmits PII to external SaaS.
 - **Data minimisation.** Notification payloads and log lines per §19, §23 — only what the recipient is permitted to see.
 
-## 33. Build + deploy + eval-runner integration
+## 33. Build + deploy
 
-> **Tier note.** The eval-runner (per repo `README.md`) clones the submission at demo time and invokes `make eval` (declared in `eval-meta.yaml`). Without that, the submission cannot be eval'd → forfeit deterministic + AI points.
+> **Tier note.** The external scoring system (per repo `README.md`) pulls each team's `main` branch and runs lane-specific evaluation. No special entrypoint — stack-conventional commands are used (`npm test`, `pytest`, `go test ./...`, etc.). `TEAM.md` declares team + members + stack; the scorer infers the rest from standard manifest files.
 
 - **Single-container deploy.** A Dockerfile that builds, runs migrations on startup, exposes one port. Multi-stage build keeps the runtime image small.
 - **`docker-compose.yml`** wires the BE + DB + storage (MinIO if S3) + optional Redis. `docker compose up` boots the full stack.
-- **`make eval` (or `npm run eval` / equivalent)** invoked by the eval-runner. The target chains: install → migrate → seed → lint → type-check → unit + integration tests → build → security scans (`gitleaks`, `trivy fs`, `semgrep`). Each step exits non-zero on failure.
-- **`eval-meta.yaml`** declares: stack ids (language + framework + DB), `make eval` entrypoint, high-risk paths (auth flow, file upload, document storage, export endpoint, audit log writer, anywhere user-supplied notes are rendered).
+- **Stack-conventional build/test commands.** Repo builds and tests must run with idiomatic commands for the chosen stack (`npm install && npm test`, `pip install -r requirements.txt && pytest`, `mvn verify`, `cargo test`, etc.). Document them in `README.md`.
+- **`TEAM.md` at repo root** (per repo `README.md` *TEAM.md — team manifest*) declares team, members (email matching git commits), stack. High-risk paths and intentional scope cuts go in the free-form notes body — the scorer reads them.
 - **Environment hardening.** Production container runs as a non-root user. No shell in the image where possible (distroless / alpine). `HEALTHCHECK` instruction wired to `/healthz`.
 - **Build reproducibility.** Pin language + framework + dependency versions. Lockfile committed.
 - **No build-time secrets.** Secrets injected at run time via env vars (§22).
@@ -580,7 +580,7 @@ GDPR applies. Slovak labour law mandates retention of attendance records for a s
 Goal: a new contributor clones, runs one command, has a working portal.
 
 - **One-command bootstrap.** `make setup` (or `npm run setup` / `./scripts/setup.sh`). Copies `.env.example` to `.env`, runs `docker compose up -d` for dependencies, runs migrations, runs seed, verifies the API responds.
-- **Language version pinned.** `.tool-versions` / `.nvmrc` / `.python-version` / `go.mod` toolchain / `Cargo.toml` rust-version. Same version used in CI + eval-runner.
+- **Language version pinned.** `.tool-versions` / `.nvmrc` / `.python-version` / `go.mod` toolchain / `Cargo.toml` rust-version. Same version used in CI + scoring system.
 - **Single-command server start.** `make dev` runs the BE + mocks the email outbox + tails logs.
 - **Deterministic seed.** Same input → same UUIDs, same orderings. Fixed RNG seed.
 - **Seed fixtures cover** the spec §13 MVP acceptance + the testing-be §18 fixture set: org tree of depth ≥ 3, ≥ 2 teams, ≥ 1 HR, ≥ 1 Admin, multiple Employees + Managers, 2026 Slovak public holidays, end-of-2026 states for Anna / Peter / Mária worked examples.
@@ -630,7 +630,7 @@ If a team allocates **3-4 people** to backend:
 - **1** — Domain core: entities, rule engine, quota computed view, state machine, approval routing.
 - **1** — API layer: OpenAPI spec, handlers, validation, error envelope, authorisation.
 - **1** — Persistence + migrations + seed + transactions + audit + notifications.
-- **1** — Document storage + XLSX export pipeline + year-rollover job + eval-runner wiring.
+- **1** — Document storage + XLSX export pipeline + year-rollover job + scoring system wiring.
 
 If a team allocates **2 people** to backend: prioritise domain core + API layer + persistence; defer XLSX export and year-rollover until the absence + worktime + approval flow is end-to-end green.
 

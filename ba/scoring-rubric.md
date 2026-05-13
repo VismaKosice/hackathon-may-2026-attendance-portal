@@ -5,7 +5,7 @@
 **Total:** 100 Basic + up to 30 Bonus (gated by Basic ≥ 90%) = up to 130 points.
 **Date:** 2026-05-12
 
-> The BA lane is a **parallel scoring axis**, judged independently of build teams. The BA does not staff a team and does not gate dev flow. Output is an end-of-day **analysis bundle** — story set + dependency analysis + traceability matrix + team-shape recommendations + Bonus ROI ranking.
+> The BA lane is a **parallel, individual scoring axis**, judged independently of build teams. BAs are ranked **per-individual** on a dedicated BA tab; **BA scores never contribute to any team's total score**. The BA does not staff a team and does not gate dev flow. Output is an end-of-day **analysis bundle** — story set + dependency analysis + traceability matrix + team-shape recommendations + Bonus ROI ranking.
 
 > **The spec is the contract.** Bundles are judged on how well they slice and analyse `product-spec.md` — not on what the BA invents around it. Inventing requirements is penalised under the "Polish" axis, not rewarded.
 

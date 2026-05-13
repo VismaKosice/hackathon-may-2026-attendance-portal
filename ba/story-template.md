@@ -257,7 +257,7 @@ A story is considered "done" when a team that uses it could say all of these are
 - [ ] Hard rule(s) named in the story trip with the spec §9.1 message.
 - [ ] Notification record(s) and audit entry written (or "none" was declared upfront).
 - [ ] Demo cue rehearsed once against a real running portal.
-- [ ] Code merged into the branch the eval-runner will clone at demo time.
+- [ ] Code merged into `main` — the scoring system pulls each team's `main` branch.
 
 ## What this template is NOT
 

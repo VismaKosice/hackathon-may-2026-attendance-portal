@@ -39,7 +39,7 @@ The product spec's tier gate (Basic ≥ 90 % before any Bonus is counted) applie
 | §18 Determinism + clock control | **Basic** | No magic-number waits; injected clock. |
 | §19 Test data + seed reset | **Basic** | Per-test or per-suite reset. |
 | §20 Flake handling | **Basic** | Quarantine, do not silently retry. |
-| §21 CI + parallelisation + reporting | **Basic** | `make e2e` declared in `eval-meta.yaml`. |
+| §21 CI + parallelisation + reporting | **Basic** | `make e2e` runnable with stack-conventional commands. |
 | §22 Cross-browser coverage | **Bonus** for full matrix; **Basic** for one engine. |
 | §23 Mobile-device emulation | **Basic** for E2/E3/E5 at 375×667 + 412×915 (per FE refinement §19.3). |
 | §24 Coverage targets + reporting | **Basic** | Critical flows 100 %; rule surface 100 %. |
@@ -75,7 +75,7 @@ The product spec's tier gate (Basic ≥ 90 % before any Bonus is counted) applie
   - **Mobile-viewport runs for E2, E3, E5** at **375×667** and **412×915** (per FE refinement §19.3 + spec §14 mobile-friendly Bonus).
   - One Full-HD run (1920×1080) for the team-calendar grid + balances dashboard to verify the wide layout (FE refinement §1 calls out the breakpoint range).
 - **Headed mode locally** is fine; CI runs are headless.
-- **Trace / video / screenshot capture on failure** — Playwright `trace: 'on-first-retry'`, Cypress video recording, equivalent. Stored as build artifacts for the eval-runner.
+- **Trace / video / screenshot capture on failure** — Playwright `trace: 'on-first-retry'`, Cypress video recording, equivalent. Stored as build artifacts for the scoring system.
 
 ## 3. Critical flows E1-E9
 
@@ -284,10 +284,10 @@ Stretch axis. Add screenshot diffs per route, per theme, on PRs only. Tools: Pla
 
 ## 21. CI + parallelisation + reporting
 
-- **Single command entrypoint.** `make e2e`, `npm run e2e`, `pnpm test:e2e`, `npx playwright test`, `npx cypress run`. Declared in `eval-meta.yaml`.
+- **Single command entrypoint.** `make e2e`, `npm run e2e`, `pnpm test:e2e`, `npx playwright test`, `npx cypress run`. Document the chosen command in `README.md`.
 - **Headless** — no GUI on CI.
 - **Parallelisation** — Playwright workers, Cypress parallelisation, framework equivalent. Tune workers to keep total suite under ~10 min on CI.
-- **JUnit XML report** to `reports/e2e/junit/*.xml` for the eval-runner.
+- **JUnit XML report** to `reports/e2e/junit/*.xml` for the scoring system.
 - **HTML report** (Playwright report, Cypress dashboard, Allure) for human inspection.
 - **Screenshots + videos** uploaded as artifacts on failure.
 - **Smoke vs full suites.** A `make e2e-smoke` runs E1-E9 fast (~3 min) for PR gating; `make e2e` runs everything (~15 min) on main.

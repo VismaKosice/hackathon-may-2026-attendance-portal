@@ -186,7 +186,7 @@ Feature: Employee — worktime, absences, balances, notifications
 
   @bonus @auth
   Scenario: Real auth — login via OIDC / magic-link / password
-    Given the team has chosen one real auth mechanism declared in eval-meta.yaml
+    Given the team has chosen one real auth mechanism declared in TEAM.md notes
     When I authenticate via that mechanism
     Then I land on my employee dashboard with my real identity bound
 
@@ -206,25 +206,25 @@ Feature: Employee — worktime, absences, balances, notifications
 
   @bonus @email-channel
   Scenario: Vacation submission also delivers an "Approval needed" email when the email Bonus is implemented
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     When I submit a Vacation request from "2026-07-13" to "2026-07-17"
     Then the SMTP capture contains an "Approval needed" email addressed to my direct manager
 
   @bonus @email-channel
   Scenario: Sickday submission also delivers a sickday email to manager, team, and HR
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     And today is a working day with no consecutive sickday
     When I submit a Sickday for today
     Then the SMTP capture contains a sickday email addressed to my direct manager, my team members and the HR group
 
   @bonus @email-channel
   Scenario: Document upload also delivers a "New document" email to HR
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     When I submit a half-day Paragraph with an attached PDF
     Then the SMTP capture contains a "New document" email addressed to the HR group
 
   @bonus @email-channel
   Scenario: PN logging also delivers a PN email to manager, team, and HR
-    Given the email-channel Bonus is declared in eval-meta.yaml
+    Given the email-channel Bonus is declared in TEAM.md notes
     When I log PN from "2026-04-20" to "2026-04-30"
     Then the SMTP capture contains a PN email addressed to my direct manager, my same-team members and the HR group
